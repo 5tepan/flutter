@@ -29,11 +29,12 @@ class _ProductCardPageState extends State<ProductCardPage> {
         backgroundColor: theme.scaffoldBackgroundColor,
         iconTheme: const IconThemeData(color: Colors.purple),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 8.0, 0, 8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 8.0),
             child: Text(
               product!.title ?? '...',
               style: theme.textTheme.bodyMedium,
@@ -45,7 +46,7 @@ class _ProductCardPageState extends State<ProductCardPage> {
             child: ProductImageSlider(product: product),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 8.0, 0, 8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 8.0),
             child: RichText(
               text: TextSpan(
                 style: theme.textTheme.bodyMedium,
@@ -60,7 +61,7 @@ class _ProductCardPageState extends State<ProductCardPage> {
             ),
           ),
           Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+              padding: const EdgeInsets.fromLTRB(8.0, 0, 20.0, 0),
               child: ElevatedButton(
                 onPressed: product?.isAvailableForSale == false
                     ? null
@@ -75,14 +76,14 @@ class _ProductCardPageState extends State<ProductCardPage> {
               ),
           ),
           const Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 8.0, 0, 0),
+            padding: EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
             child: Text(
               'Описание:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 8.0),
+            padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
             child: Center(
               child: Text(
                 product!.productDescription != '' ?  product!.productDescription : 'Описание отсутствует...',
@@ -91,6 +92,7 @@ class _ProductCardPageState extends State<ProductCardPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
