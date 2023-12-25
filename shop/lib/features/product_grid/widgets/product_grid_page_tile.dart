@@ -33,11 +33,12 @@ class ProductGridPageTile extends StatelessWidget {
         product.title ?? '',
         style: theme.textTheme.bodyMedium,
       ),
+      // TODO: Навигацию вынести на страницу.
+      // Виджет может определить действие пользователя и дать отклик (визуальный эффект), но обрабатывать действие - задача уровня страницы.
+      // Виджеты не содержат логику приложения.
+      // По аналогии остальные виджеты
       onTap: () {
-        Navigator.of(context).pushNamed(
-          '/product_page',
-          arguments: product
-        );
+        Navigator.of(context).pushNamed('/product_page', arguments: product);
       },
     );
   }
