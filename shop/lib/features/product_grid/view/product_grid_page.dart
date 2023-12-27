@@ -4,7 +4,6 @@ import 'package:shop/repositories/shop_app/models/category.dart';
 import 'package:shop/repositories/shop_app/models/product.dart';
 import 'package:shop/shop_app.dart';
 
-
 class ProductGridPage extends StatefulWidget {
   const ProductGridPage({super.key});
 
@@ -23,6 +22,7 @@ class _ProductGridPageState extends State<ProductGridPage> {
   @override
   void initState() {
     super.initState();
+    // TODO: _scrollController и _products можно инициализировать сразу при объявлении
     _scrollController = ScrollController();
     _products = [];
     _loadData();
@@ -37,12 +37,17 @@ class _ProductGridPageState extends State<ProductGridPage> {
 
   void _scrollListener() {
     if (_scrollController.offset >=
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       _loadData();
     }
   }
 
+  // TODO: Вынести загрузку данных в ProductListModel.
+  // ProductListModel унаследовать от ChangeNotifier для обновления экрана
+  // Основные и вспомогательные данные хранятся в ProductListModel, страница считывает их из модели и отображает интерфейс в зависимости от этих данных.
+  // Страница передает команды в модель, такие как: загрузка данных, загрузка новой порции данных, перезагрузка данных и прочее. Набор команд зависит от объекта и экрана где модель используется.
+  // По аналогии добавить модели для других страниц
   Future<void> _loadData() async {
     if (_loading || category == null || !_hasMoreData) {
       return;
@@ -52,12 +57,8 @@ class _ProductGridPageState extends State<ProductGridPage> {
       _loading = true;
     });
 
-    final List<Product> newData = await ShopApp
-        .getProductApi()
-        .getProductList(
-        category!.categoryId.toString(),
-        _offset
-    );
+    final List<Product> newData = await ShopApp.getProductApi()
+        .getProductList(category!.categoryId.toString(), _offset);
 
     if (newData != null && newData.isNotEmpty) {
       setState(() {
@@ -88,27 +89,27 @@ class _ProductGridPageState extends State<ProductGridPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(category?.title ?? '...'),
-          backgroundColor: theme.colorScheme.inversePrimary,
-        ),
-        body: ListView.separated(
-          controller: _scrollController,
-          itemCount: _loading ? _products.length + 1 : _products.length,
-          separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, index) {
-            if (index < _products.length) {
-              final product = _products[index];
-              return ProductGridPageTile(product: product);
-            } else if (_loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
+      appBar: AppBar(
+        title: Text(category?.title ?? '...'),
+        backgroundColor: theme.colorScheme.inversePrimary,
+      ),
+      body: ListView.separated(
+        controller: _scrollController,
+        itemCount: _loading ? _products.length + 1 : _products.length,
+        separatorBuilder: (context, index) => const Divider(),
+        itemBuilder: (context, index) {
+          if (index < _products.length) {
+            final product = _products[index];
+            return ProductGridPageTile(product: product);
+          } else if (_loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 }

@@ -11,8 +11,11 @@ class CategoryApi extends BaseApi {
         .map((categoryJson) => Category.fromJson(categoryJson))
         .toList();
 
+    // TODO: Два замечания:
+    // 1. Стараемся не использовать клиентскую фильтрацию данных. Т.к. это может привести к незапланированному поведению в приложении
+    // 2. Если один из параметров будет null, то приложение уже выкинет исключение на методе Category.fromJson(categoryJson))
     categoryList.retainWhere((category) =>
-    category.categoryId != null &&
+        category.categoryId != null &&
         category.title != null &&
         category.imageUrl != null);
 

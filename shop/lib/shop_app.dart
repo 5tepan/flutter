@@ -16,6 +16,7 @@ class ShopApp extends StatelessWidget {
     );
   }
 
+  // TODO: Использовать Provider для передачи Api на экраны
   static ProductApi getProductApi() => ProductApi();
   static CategoryApi getCategoryApi() => CategoryApi();
 }

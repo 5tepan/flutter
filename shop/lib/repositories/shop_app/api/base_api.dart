@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BaseApi {
+  // TODO: заменить dio на http.
+  // У этих пакетов есть свои плюсы и минусы, причина замены - соответствие внутренним гайдлайнам, мы используем http.
   late Dio dio;
   final apiKey = dotenv.env['API_KEY'];
   final baseUrl = dotenv.env['BASE_URL'];
