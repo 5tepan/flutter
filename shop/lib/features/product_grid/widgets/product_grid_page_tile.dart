@@ -6,9 +6,11 @@ class ProductGridPageTile extends StatelessWidget {
   const ProductGridPageTile({
     super.key,
     required this.product,
+    required this.onTap
   });
 
   final Product product;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +35,11 @@ class ProductGridPageTile extends StatelessWidget {
         product.title ?? '',
         style: theme.textTheme.bodyMedium,
       ),
-      // TODO: Навигацию вынести на страницу.
+      // TODO: Навигацию вынести на страницу. ##
       // Виджет может определить действие пользователя и дать отклик (визуальный эффект), но обрабатывать действие - задача уровня страницы.
       // Виджеты не содержат логику приложения.
       // По аналогии остальные виджеты
-      onTap: () {
-        Navigator.of(context).pushNamed('/product_page', arguments: product);
-      },
+      onTap: onTap,
     );
   }
 }

@@ -6,9 +6,11 @@ class CategoryGridPageTile extends StatelessWidget {
   const CategoryGridPageTile({
     super.key,
     required this.category,
+    required this.onTap,
   });
 
   final Category category;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +42,7 @@ class CategoryGridPageTile extends StatelessWidget {
           ),
         ],
       ),
-      onTap: () {
-        Navigator.of(context).pushNamed(
-            '/product_grid_page',
-            arguments: category
-        );
-      },
+      onTap: onTap,
     );
   }
 }

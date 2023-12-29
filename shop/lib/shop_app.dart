@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/repositories/shop_app/api/category_api.dart';
 import 'package:shop/repositories/shop_app/api/product_api.dart';
 import 'package:shop/router/router.dart';
@@ -9,14 +10,22 @@ class ShopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Shop',
-      theme: darkTheme,
-      routes: routes,
+    return MultiProvider(
+      providers: [
+        Provider<ProductApi>(
+          create: (_) => ProductApi(),
+        ),
+        Provider<CategoryApi>(
+          create: (_) => CategoryApi(),
+        ),
+      ],
+      child: MaterialApp(
+          title: 'Shop',
+          theme: AppThemes.darkTheme,
+          home: AppRoutes.categoryList().builder(context)
+      )
     );
   }
 
-  // TODO: Использовать Provider для передачи Api на экраны
-  static ProductApi getProductApi() => ProductApi();
-  static CategoryApi getCategoryApi() => CategoryApi();
+  // TODO: Использовать Provider для передачи Api на экраны ##
 }

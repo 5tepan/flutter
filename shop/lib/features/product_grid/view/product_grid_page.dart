@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/features/product_grid/view/product_list_model.dart';
 import 'package:shop/features/product_grid/widgets/product_grid_page_tile.dart';
+import 'package:shop/repositories/shop_app/api/product_api.dart';
 import 'package:shop/repositories/shop_app/models/category.dart';
-import 'package:shop/repositories/shop_app/models/product.dart';
-import 'package:shop/shop_app.dart';
+import 'package:shop/router/router.dart';
 
 class ProductGridPage extends StatefulWidget {
-  const ProductGridPage({super.key});
+  const ProductGridPage({
+    super.key,
+    required this.category
+  });
+
+  final Category category;
 
   @override
   State<ProductGridPage> createState() => _ProductGridPageState();
 }
 
 class _ProductGridPageState extends State<ProductGridPage> {
-  Category? category;
-  late ScrollController _scrollController;
-  late List<Product> _products;
-  bool _loading = false;
-  int _offset = 0;
-  bool _hasMoreData = true;
+  final ScrollController _scrollController = ScrollController();
+  final ProductListModel _productListModel = ProductListModel();
 
   @override
   void initState() {
     super.initState();
-    // TODO: _scrollController и _products можно инициализировать сразу при объявлении
-    _scrollController = ScrollController();
-    _products = [];
+    // TODO: _scrollController и _products можно инициализировать сразу при объявлении ##
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -37,51 +38,20 @@ class _ProductGridPageState extends State<ProductGridPage> {
 
   void _scrollListener() {
     if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       _loadData();
     }
   }
 
-  // TODO: Вынести загрузку данных в ProductListModel.
+  // TODO: Вынести загрузку данных в ProductListModel. ##
   // ProductListModel унаследовать от ChangeNotifier для обновления экрана
   // Основные и вспомогательные данные хранятся в ProductListModel, страница считывает их из модели и отображает интерфейс в зависимости от этих данных.
   // Страница передает команды в модель, такие как: загрузка данных, загрузка новой порции данных, перезагрузка данных и прочее. Набор команд зависит от объекта и экрана где модель используется.
   // По аналогии добавить модели для других страниц
   Future<void> _loadData() async {
-    if (_loading || category == null || !_hasMoreData) {
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-    });
-
-    final List<Product> newData = await ShopApp.getProductApi()
-        .getProductList(category!.categoryId.toString(), _offset);
-
-    if (newData != null && newData.isNotEmpty) {
-      setState(() {
-        _products.addAll(newData);
-        _offset += 10;
-        _loading = false;
-      });
-    } else {
-      setState(() {
-        _hasMoreData = false;
-        _loading = false;
-      });
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    final args = ModalRoute.of(context)?.settings.arguments;
-    assert(args != null && args is Category, 'You must provide Category args');
-    category = args as Category;
-    _offset = 0;
-    _loadData();
-    super.didChangeDependencies();
+    final productApi = Provider.of<ProductApi>(context, listen: false);
+    await _productListModel.loadProducts(productApi, widget.category.categoryId.toString());
   }
 
   @override
@@ -90,25 +60,39 @@ class _ProductGridPageState extends State<ProductGridPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(category?.title ?? '...'),
+        title: Text(widget.category.title ?? '...'),
         backgroundColor: theme.colorScheme.inversePrimary,
       ),
-      body: ListView.separated(
-        controller: _scrollController,
-        itemCount: _loading ? _products.length + 1 : _products.length,
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context, index) {
-          if (index < _products.length) {
-            final product = _products[index];
-            return ProductGridPageTile(product: product);
-          } else if (_loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+      body: ChangeNotifierProvider.value(
+        value: _productListModel,
+        child: Consumer<ProductListModel>(
+          builder: (context, productListModel, child) {
+            return ListView.separated(
+              controller: _scrollController,
+              itemCount: productListModel.loading
+                  ? productListModel.products.length + 1
+                  : productListModel.products.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                if (index < productListModel.products.length) {
+                  final product = productListModel.products[index];
+                  return ProductGridPageTile(
+                    product: product,
+                    onTap: () {
+                      Navigator.of(context).push(AppRoutes.productPage(product.productId));
+                    },
+                  );
+                } else if (productListModel.loading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Container();
+                }
+              },
             );
-          } else {
-            return Container();
-          }
-        },
+          },
+        ),
       ),
     );
   }
