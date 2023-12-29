@@ -7,10 +7,7 @@ import 'package:shop/repositories/shop_app/models/category.dart';
 import 'package:shop/router/router.dart';
 
 class ProductGridPage extends StatefulWidget {
-  const ProductGridPage({
-    super.key,
-    required this.category
-  });
+  const ProductGridPage({super.key, required this.category});
 
   final Category category;
 
@@ -18,6 +15,7 @@ class ProductGridPage extends StatefulWidget {
   State<ProductGridPage> createState() => _ProductGridPageState();
 }
 
+// TODO: Сделать базовый класс для страниц. Функиции базового класса: объявление модели, построение scaffold и общих состояний экрана (ошибка и загрузка), базовая бизнес-логика
 class _ProductGridPageState extends State<ProductGridPage> {
   final ScrollController _scrollController = ScrollController();
   final ProductListModel _productListModel = ProductListModel();
@@ -25,7 +23,6 @@ class _ProductGridPageState extends State<ProductGridPage> {
   @override
   void initState() {
     super.initState();
-    // TODO: _scrollController и _products можно инициализировать сразу при объявлении ##
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -38,20 +35,17 @@ class _ProductGridPageState extends State<ProductGridPage> {
 
   void _scrollListener() {
     if (_scrollController.offset >=
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       _loadData();
     }
   }
 
-  // TODO: Вынести загрузку данных в ProductListModel. ##
-  // ProductListModel унаследовать от ChangeNotifier для обновления экрана
-  // Основные и вспомогательные данные хранятся в ProductListModel, страница считывает их из модели и отображает интерфейс в зависимости от этих данных.
-  // Страница передает команды в модель, такие как: загрузка данных, загрузка новой порции данных, перезагрузка данных и прочее. Набор команд зависит от объекта и экрана где модель используется.
-  // По аналогии добавить модели для других страниц
   Future<void> _loadData() async {
     final productApi = Provider.of<ProductApi>(context, listen: false);
-    await _productListModel.loadProducts(productApi, widget.category.categoryId.toString());
+    // TOD: API и категорию передавать в конструкторе ProductListModel| Для доступа к context и widget использовать late
+    await _productListModel.loadProducts(
+        productApi, widget.category.categoryId.toString());
   }
 
   @override
@@ -60,13 +54,14 @@ class _ProductGridPageState extends State<ProductGridPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category.title ?? '...'),
+        title: Text(widget.category.title),
         backgroundColor: theme.colorScheme.inversePrimary,
       ),
       body: ChangeNotifierProvider.value(
         value: _productListModel,
         child: Consumer<ProductListModel>(
           builder: (context, productListModel, child) {
+            // TODO: Добавить состояние ошибки и загрузки первой партии
             return ListView.separated(
               controller: _scrollController,
               itemCount: productListModel.loading
@@ -79,7 +74,8 @@ class _ProductGridPageState extends State<ProductGridPage> {
                   return ProductGridPageTile(
                     product: product,
                     onTap: () {
-                      Navigator.of(context).push(AppRoutes.productPage(product.productId));
+                      Navigator.of(context)
+                          .push(AppRoutes.productPage(product.productId));
                     },
                   );
                 } else if (productListModel.loading) {

@@ -11,21 +11,17 @@ class ShopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        Provider<ProductApi>(
-          create: (_) => ProductApi(),
-        ),
-        Provider<CategoryApi>(
-          create: (_) => CategoryApi(),
-        ),
-      ],
-      child: MaterialApp(
-          title: 'Shop',
-          theme: AppThemes.darkTheme,
-          home: AppRoutes.categoryList().builder(context)
-      )
-    );
+        providers: [
+          Provider<ProductApi>(
+            create: (_) => ProductApi(),
+          ),
+          Provider<CategoryApi>(
+            create: (_) => CategoryApi(),
+          ),
+        ],
+        child: MaterialApp(
+            title: 'Shop',
+            theme: AppThemes.darkTheme,
+            home: AppRoutes.categoryList().builder(context)));
   }
-
-  // TODO: Использовать Provider для передачи Api на экраны ##
 }
