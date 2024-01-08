@@ -14,7 +14,6 @@ class CategoryGridPage extends StatefulWidget {
 class _CategoryGridPageState extends State<CategoryGridPage> {
   final CategoryListModel _categoryListModel = CategoryListModel();
 
-
   @override
   void initState() {
     super.initState();
@@ -31,42 +30,46 @@ class _CategoryGridPageState extends State<CategoryGridPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('КАТЕГОРИИ'),
-      ),
-      body: ChangeNotifierProvider.value(
-        value: _categoryListModel,
-        child: Consumer<CategoryListModel>(
-        builder: (context, categoryListModel, child) {
-          if (categoryListModel.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (categoryListModel.error.isNotEmpty) {
-            return Center(child: Text('No categories available. ${categoryListModel.error}'));
-          } else if (categoryListModel.categories.isEmpty) {
-            return const Center(child: Text('No categories available.'));
-          } else {
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-              ),
-              itemCount: categoryListModel.categories.length,
-              itemBuilder: (context, index) {
-                final category = categoryListModel.categories[index];
-                return CategoryGridPageTile(
-                  category: category,
-                  onTap: () {
-                    Navigator.of(context).push(AppRoutes.productList(category));
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.inversePrimary,
+          title: const Text('КАТЕГОРИИ'),
+        ),
+
+        // TODO: ListenableBuilder
+        body: ChangeNotifierProvider.value(
+          value: _categoryListModel,
+          child: Consumer<CategoryListModel>(
+            builder: (context, categoryListModel, child) {
+              if (categoryListModel.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (categoryListModel.error.isNotEmpty) {
+                return Center(
+                    child: Text(
+                        'No categories available. ${categoryListModel.error}'));
+              } else if (categoryListModel.categories.isEmpty) {
+                return const Center(child: Text('No categories available.'));
+              } else {
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: categoryListModel.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categoryListModel.categories[index];
+                    return CategoryGridPageTile(
+                      category: category,
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(AppRoutes.productList(category));
+                      },
+                    );
                   },
                 );
-              },
-            );
-          }
-        },
-      ),
-      )
-    );
+              }
+            },
+          ),
+        ));
   }
 }

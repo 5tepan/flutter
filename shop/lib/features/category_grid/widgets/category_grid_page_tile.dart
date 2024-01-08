@@ -21,6 +21,7 @@ class CategoryGridPageTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // TODO: Вынести в отдельный виджет и переиспользовать в других местах
           Image.network(
             category.imageUrl,
             width: 100,
@@ -35,11 +36,8 @@ class CategoryGridPageTile extends StatelessWidget {
               );
             },
           ),
-          Text(
-            category.title.toUpperCase(),
-            style: theme.textTheme.bodyMedium,
-            textAlign: TextAlign.center
-          ),
+          Text(category.title.toUpperCase(),
+              style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
         ],
       ),
       onTap: onTap,
