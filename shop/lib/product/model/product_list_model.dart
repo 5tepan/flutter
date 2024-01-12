@@ -30,6 +30,7 @@ class ProductListModel extends BaseModel<ProductApi> {
       if (newData.isNotEmpty) {
         _products.addAll(newData);
         _offset += newData.length;
+        notifyListeners();
       } else {
         _hasMoreData = false;
       }

@@ -15,6 +15,7 @@ class ProductCardModel extends BaseModel<ProductApi> {
     try {
       setLoading(true);
       _product = await api.getProductDetails(_productId.toString());
+      notifyListeners();
     } catch (e) {
       setError('Error: $e');
     } finally {

@@ -13,12 +13,10 @@ abstract class BaseModel<T> extends ChangeNotifier {
 
   void setLoading(bool value) {
     _loading = value;
-    notifyListeners();
   }
 
   void setError(String errorMessage) {
     _error = errorMessage;
-    notifyListeners();
   }
 
   Future<void> loadData();

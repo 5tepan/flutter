@@ -14,6 +14,7 @@ class CategoryListModel extends BaseModel<CategoryApi> {
     try {
       setLoading(true);
       _categories = await api.getCategoryList();
+      notifyListeners();
     } catch (e) {
       setError('Error: $e');
     } finally {
